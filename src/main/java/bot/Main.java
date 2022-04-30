@@ -9,7 +9,7 @@ public class Main {
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new osipovBot());
+            botsApi.registerBot(new OsipovBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

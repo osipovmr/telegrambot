@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class osipovBot extends TelegramLongPollingBot {
+public class OsipovBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         //Извлекаем из объекта сообщение пользователя
@@ -29,8 +29,7 @@ public class osipovBot extends TelegramLongPollingBot {
                 //Отправка в чат
                 execute(outMess);
             }
-        }
-        catch (TelegramApiException e) {
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
@@ -38,17 +37,22 @@ public class osipovBot extends TelegramLongPollingBot {
     private String getUserName(Message msg) {
         User user = msg.getFrom();
         String userName = user.getUserName();
-        return (userName != null) ? userName : String.format("%s %s", user.getLastName(), user.getFirstName());
+        if (userName != null) {
+            return userName;
+        } else {
+            return String.format("%s %s", user.getLastName(), user.getFirstName());
+        }
     }
 
     public String parseMessage(String textMsg) {
         String response;
-        if (textMsg.equals("/start"))
+        if (textMsg.equals("/start")) {
             response = "Приветствую, ";
-        else if (textMsg.equals("/help"))
+        } else if (textMsg.equals("/help")) {
             response = "Чтобы получить помощь, обратитесь к пользователю osipov_mr, ";
-        else
+        } else {
             response = "Сообщение не распознано, нажмите /start или /help, гражданин ";
+        }
 
         return response;
     }
