@@ -16,17 +16,41 @@ public class OsipovBot extends TelegramLongPollingBot {
         //Достаем из inMess id чата пользователя
         String chatId = inMess.getChatId().toString();
         String userName = getUserName(inMess);
-        //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
-        String response = parseMessage(inMess.getText());
+        UserList a = new UserList();
         //Создаем объект класса SendMessage - наш будущий ответ пользователю
         SendMessage outMess = new SendMessage();
 
         try {  // We check if the update has a message and the message has text
             if (update.hasMessage() && inMess.hasText()) {
-                //Добавляем в наше сообщение id чата а также наш ответ
+                switch (inMess.getText()) {
+                    case "/start" -> {
+                        a.addList(userName);
+                        outMess.setText("Это команда старт, гражданин " + userName);
+                        break;
+                    }
+                    case "/help" -> {
+                        outMess.setText("Чтобы получить помощь, обратитесь к пользователю osipov_mr");
+                        break;
+                    }
+                    case "/usersList" -> {
+                        String f = a.getList().toString();
+                        outMess.setText("Это команда выводит список пользователей, выбравших команду /start:"
+                                + "\n" +
+                                f);
+                        break;
+                    }
+                    default -> {
+                        outMess.setText("Сообщение не распознано, вот список команд:"
+                                + "\n" +
+                                "/start"
+                                + "\n" +
+                                "/help"
+                                + "\n" +
+                                "/usersList");
+                        break;
+                    }
+                }
                 outMess.setChatId(chatId);
-                outMess.setText(response + userName + ".");
-                //Отправка в чат
                 execute(outMess);
             }
         } catch (TelegramApiException e) {
@@ -34,7 +58,7 @@ public class OsipovBot extends TelegramLongPollingBot {
         }
     }
 
-    private String getUserName(Message msg) {
+    public String getUserName(Message msg) {
         User user = msg.getFrom();
         String userName = user.getUserName();
         if (userName != null) {
@@ -44,22 +68,8 @@ public class OsipovBot extends TelegramLongPollingBot {
         }
     }
 
-    public String parseMessage(String textMsg) {
-        String response;
-        if (textMsg.equals("/start")) {
-            response = "Приветствую, ";
-        } else if (textMsg.equals("/help")) {
-            response = "Чтобы получить помощь, обратитесь к пользователю osipov_mr, ";
-        } else {
-            response = "Сообщение не распознано, нажмите /start или /help, гражданин ";
-        }
-
-        return response;
-    }
-
     @Override
     public String getBotUsername() {
-
         return "osipovBot";
     }
 
