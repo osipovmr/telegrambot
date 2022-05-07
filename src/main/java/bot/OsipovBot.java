@@ -12,8 +12,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 
 public class OsipovBot extends TelegramLongPollingBot {
-    UserList a = new UserList();
-    ArrayList<String> f = a.getList();
+    UserNameMap userNameMap = new UserNameMap();
+
     @Override
     public void onUpdateReceived(Update update) {
         //Извлекаем из объекта сообщение пользователя
@@ -27,19 +27,35 @@ public class OsipovBot extends TelegramLongPollingBot {
         String start = "/start";
         String help = "/help";
         String userList = "/userList";
+        String spam = "/spam";
         try {  // We check if the update has a message and the message has text
             if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(start))) {
-                a.addList(userName); //приложение при срабатывании команды старт записывает пользователя в коллекцию
+                userNameMap.addUserNames(chatId, userName); //приложение при срабатывании команды старт записывает пользователя в коллекцию
                 outMess.setText("Это команда старт, гражданин " +
                         userName + "."
                         + "\n" +
                         "Мы сохранили Ваш userName в нашем безопасном банке.");
+                outMess.setChatId(chatId);
+                execute(outMess);
             } else if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(help))) {
                 outMess.setText("Чтобы получить помощь, обратитесь к пользователю @osipov_mr");
+                outMess.setChatId(chatId);
+                execute(outMess);
             } else if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(userList))) {
                 outMess.setText("Данная команда выводит список пользователей, нажавших /start:"
                         + "\n" +
-                        f);
+                        userNameMap.getUserNames());
+                outMess.setChatId(chatId);
+                execute(outMess);
+            } else if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(spam))) {
+                outMess.setText("Выбрана команда /spam, выполнена рассылка всем активным пользователям."
+                        + "\n" +
+                        userNameMap.getUserNames());
+                for (int i = 0; i <= userNameMap.idList.size(); i++) {
+                    chatId = userNameMap.getChatId(i);
+                    outMess.setChatId(chatId);
+                    execute(outMess);
+                }
             } else if (update.hasMessage() && inMess.hasText()) {
                 outMess.setText("Сообщение не распознано, вот список доступных команд:"
                         + "\n" +
@@ -48,10 +64,12 @@ public class OsipovBot extends TelegramLongPollingBot {
                         "/help"
                         + "\n" +
                         "/userList"
+                        + "\n" +
+                        "/spam"
                 );
+                outMess.setChatId(chatId);
+                execute(outMess);
             }
-            outMess.setChatId(chatId);
-            execute(outMess);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
