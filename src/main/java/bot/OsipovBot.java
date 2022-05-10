@@ -30,7 +30,15 @@ public class OsipovBot extends TelegramLongPollingBot {
         String spam = "/spam";
         try {  // We check if the update has a message and the message has text
             if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(start))) {
-                userNameMap.addUserNames(chatId, userName); //приложение при срабатывании команды старт записывает пользователя в коллекцию
+                userNameMap.addUserNames(chatId, userName);//приложение при срабатывании команды старт записывает пользователя в коллекцию
+                userNameMap.idList.add(chatId);
+                userNameMap.values.add(userName);
+                System.out.println(userNameMap.userNames);
+                System.out.println("id:");
+                System.out.println(userNameMap.idList);
+                System.out.println("User names:");
+                System.out.println(userNameMap.values);
+
                 outMess.setText("Это команда старт, гражданин " +
                         userName + "."
                         + "\n" +
@@ -49,6 +57,8 @@ public class OsipovBot extends TelegramLongPollingBot {
                 execute(outMess);
             } else if ((update.hasMessage() && inMess.hasText()) && (inMessText.equals(spam))) {
                 outMess.setText("Выбрана команда /spam, выполнена рассылка всем активным пользователям."
+                        + "\n" +
+                        "Данное сообщение получили:"
                         + "\n" +
                         userNameMap.getUserNames());
                 for (int i = 0; i <= userNameMap.idList.size(); i++) {

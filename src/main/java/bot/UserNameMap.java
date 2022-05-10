@@ -8,6 +8,7 @@ import java.util.Set;
 public class UserNameMap {
     HashMap<String, String> userNames = new HashMap<>();
     ArrayList<String> idList = new ArrayList<>(userNames.keySet());
+    ArrayList<String> values = new ArrayList<>(userNames.values());
 
     public void addUserNames(String id, String name) {
         userNames.put(id, name);
